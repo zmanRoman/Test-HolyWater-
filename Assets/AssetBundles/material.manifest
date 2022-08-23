@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 3273830625
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f7d1eaa556f1d4906823d4f30c703050
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 82515b3694a1e5beae009c48c1198c34
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Material/card_2_material.mat
+- Assets/Material/card_1_material.mat
+Dependencies:
+- C:/UnityProject/Test HolyWater/Assets/AssetBundles/card
