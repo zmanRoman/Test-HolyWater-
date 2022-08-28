@@ -5,7 +5,9 @@ using Script.Holders;
 using UnityEngine;
 
 namespace Script.Loading
-{
+{/// <summary>
+ /// loading and managing bundles
+ /// </summary>
     public class LoadAssetBundle : MonoBehaviour
     {
         private const string CardAsset = "card";
@@ -34,8 +36,8 @@ namespace Script.Loading
             
             for (var i = 1; i <= count; i++)
             {
-                GameObject card = cardAssetBundle.LoadAsset<GameObject>(CardName + i);
-                CardHandler cardHandler = card.GetComponent<CardHandler>();
+                var card = cardAssetBundle.LoadAsset<GameObject>(CardName + i);
+                var cardHandler = card.GetComponent<CardHandler>();
                 CardHolder.Instance.AddCardPrefab( cardHandler);
                 
                 var materialCard = materialAssetBundle.LoadAsset<Material>(CardName+i+MaterialName);
@@ -55,7 +57,7 @@ namespace Script.Loading
             
             for (var i = 1; i <= count; i++)
             {
-                GameObject item = assetBundle.LoadAsset<GameObject>(SlideName + i);
+                var item = assetBundle.LoadAsset<GameObject>(SlideName + i);
                 SlideHolder.Instance.AddItemPrefab(item);
                 
                 LoadingHelper.Instance.ObjectSetup ++;

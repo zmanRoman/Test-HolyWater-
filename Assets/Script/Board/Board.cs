@@ -5,8 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Script.Board
-{
-    [RequireComponent(typeof(ContentSizeFitter))]
+{/// <summary>
+ /// Responsible for the formation and reset of the board 
+ /// </summary>
+
+ [RequireComponent(typeof(ContentSizeFitter))]
     public class Board : MonoBehaviour
     {
         [SerializeField] private int countCardInRow = 3;
@@ -43,8 +46,8 @@ namespace Script.Board
             currentCards.Sort((x, y) => x.indexInList.CompareTo(y.indexInList));
             
             if (currentCards.Count != 0)
-            {//создаем из сохраненніх данных
-                for (int i = 0; i < countCardInRow; i++)
+            {//создаем из сохраненных данных
+                for (var i = 0; i < countCardInRow; i++)
                 {
                     CardHandler cardPrefab = null;
                     foreach (var card in CardHolder.Instance.CardPrefab.Where(card =>
@@ -57,7 +60,7 @@ namespace Script.Board
             }
             else
             {//создаем рандомно
-                for (int i = 0; i < countCardInRow; i++)
+                for (var i = 0; i < countCardInRow; i++)
                 {
                     var index = Random.Range(0, CardHolder.Instance.CardPrefab.Count);
                     row.SetCard(Instantiate(CardHolder.Instance.CardPrefab[index], row.transform), null);

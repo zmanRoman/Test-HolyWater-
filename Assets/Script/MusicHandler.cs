@@ -1,11 +1,11 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioListener))]
 public class MusicHandler : MonoBehaviour
-{
+{/// <summary>
+ /// music state handling
+ /// </summary>
     [SerializeField] private AudioClip music;
     [SerializeField] private AudioClip fx;
 
@@ -33,14 +33,14 @@ public class MusicHandler : MonoBehaviour
         PlayMusic();
     }
 
-    
-    public void SetMusicVolume(float volume)
+
+    private void SetMusicVolume(float volume)
     {
         MusicVolume = volume;
         _audioSourceMusic.volume = volume;
     }
-    
-    public void SetFXVolume(float volume)
+
+    private void SetFXVolume(float volume)
     {
         FXVolume = volume;
     }

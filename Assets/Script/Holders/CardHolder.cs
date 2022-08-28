@@ -3,7 +3,9 @@ using Script.Board;
 using UnityEngine;
 
 namespace Script.Holders
-{
+{/// <summary>
+ /// contains all generated cards
+ /// </summary>
     public sealed class CardHolder : MonoBehaviour
     {
         public List<CardHandler> CardPrefab{ get; private set; }

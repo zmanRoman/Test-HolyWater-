@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +9,7 @@ namespace Script.Loading
     public class LoadingHelper : MonoBehaviour
     {
         public int allObjectCount;
-        [SerializeField] private int ojectSetup;
+        [SerializeField] private int objectSetup;
     
         [SerializeField] private string _textLoad;
         [SerializeField] private TextMeshProUGUI textLoad;
@@ -29,10 +28,10 @@ namespace Script.Loading
         }
         public int ObjectSetup
         {
-            get => ojectSetup;
+            get => objectSetup;
             set
             {
-                ojectSetup = value;
+                objectSetup = value;
 
 
                 if ((float)ObjectSetup / allObjectCount * 100 >= 99 && allObjectCount >= 2)

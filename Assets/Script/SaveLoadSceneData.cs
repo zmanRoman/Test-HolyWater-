@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class SaveLoadSceneData : MonoBehaviour
-{
+{/// <summary>
+ /// processing and saving data from the scene
+ /// </summary>
     private const string KeySaveData = "saveData";
     private SceneData _sceneData;
     [SerializeField]private List<CardData> cardData;

@@ -3,7 +3,9 @@ using DG.Tweening;
 using UnityEngine;
 
 namespace Script.Board
-{
+{/// <summary>
+ /// Forming a column from cards
+ /// </summary>
     public sealed class Row : MonoBehaviour
     {
         private const float Duration = 0.3f;
@@ -11,9 +13,9 @@ namespace Script.Board
         [SerializeField] private int rowNum;
 
         public int Num => rowNum;
-        
-        private bool _endSetup = false;
-        public bool EndSetup => _endSetup;
+
+        public bool EndSetup { get; private set; }
+
         private void Start()
         {
             Board.Instance.AddRow(this);
@@ -28,12 +30,10 @@ namespace Script.Board
             var oldPos = currentCard.ImageCard;
             for (var i = 0; i < cards.Count; i++)
             {
-                if (i > index)
-                {
-                    var newPos = cards[i].ImageCard;
-                    sequence.Join(newPos.transform.DOMove(oldPos.transform.position, Duration));
-                    oldPos = newPos;
-                }
+                if (i <= index) continue;
+                var newPos = cards[i].ImageCard;
+                sequence.Join(newPos.transform.DOMove(oldPos.transform.position, Duration));
+                oldPos = newPos;
             }
             await sequence.Play().AsyncWaitForCompletion();
         }
@@ -49,7 +49,7 @@ namespace Script.Board
                 cardHandler.SetupLoadData(data);
             }
             cards.Add(cardHandler);
-            _endSetup = true;
+            EndSetup = true;
         }
         public void ResetCards()
         {

@@ -1,5 +1,3 @@
-
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Script.Holders;
@@ -10,7 +8,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(ScrollRect))]
 
 public sealed class SlideUpHandler : MonoBehaviour, IEndDragHandler, IBeginDragHandler
-{
+{/// <summary>
+ /// processing and changing the state of the slider, saving / scrolling
+ /// </summary>
 
     [SerializeField] private RectTransform pointView;
     private Vector3 _pView;

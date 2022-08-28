@@ -1,12 +1,11 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Script.Board
-{
+{/// <summary>
+ /// card state processing
+ /// </summary>
     [RequireComponent(typeof(Button))]
     [RequireComponent(typeof(Image))]
     [RequireComponent(typeof(ParticleSystem))]

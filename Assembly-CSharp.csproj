@@ -43,7 +43,7 @@
   <ItemGroup>
      <Compile Include="Assets\Script\Holders\SlideHolder.cs" />
      <Compile Include="Assets\Script\MusicHandler.cs" />
-     <Compile Include="Assets\Script\CardHandler.cs" />
+     <Compile Include="Assets\Script\Board\CardHandler.cs" />
      <Compile Include="Assets\Script\WindowAnimateHandler.cs" />
      <Compile Include="Assets\Script\Board\Board.cs" />
      <Compile Include="Assets\Script\Holders\CardHolder.cs" />

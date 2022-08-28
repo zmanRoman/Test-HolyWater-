@@ -1,19 +1,22 @@
-using UnityEditor;
 using System.IO;
+using UnityEditor;
 
-public class CreateAssetBundles
+namespace Script.Editor
 {
-    [MenuItem("Assets/Build AssetBundles")]
-    static void BuildAllAssetBundles()
+    public class CreateAssetBundles
     {
-        const string assetBundleDirectory = "Assets/AssetBundles";
-        if(!Directory.Exists(assetBundleDirectory))
+        [MenuItem("Assets/Build AssetBundles")]
+        static void BuildAllAssetBundles()
         {
-            Directory.CreateDirectory(assetBundleDirectory);
+            const string assetBundleDirectory = "Assets/AssetBundles";
+            if(!Directory.Exists(assetBundleDirectory))
+            {
+                Directory.CreateDirectory(assetBundleDirectory);
+            }
+            BuildPipeline.BuildAssetBundles(assetBundleDirectory, 
+                BuildAssetBundleOptions.None, 
+                BuildTarget.Android);
         }
-        BuildPipeline.BuildAssetBundles(assetBundleDirectory, 
-            BuildAssetBundleOptions.None, 
-            BuildTarget.Android);
     }
 }
 

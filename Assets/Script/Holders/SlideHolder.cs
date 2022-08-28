@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Script.Holders
-{
+{/// <summary>
+ /// A slider that contains changing slides
+ /// </summary>
     public sealed class SlideHolder : MonoBehaviour
     {
         
