@@ -6,64 +6,51 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(ScrollRect))]
-
 public sealed class SlideUpHandler : MonoBehaviour, IEndDragHandler, IBeginDragHandler
-{/// <summary>
- /// processing and changing the state of the slider, saving / scrolling
- /// </summary>
+{
+    private const float Duration = 0.2f, Delay = 3f;
 
     [SerializeField] private RectTransform pointView;
-    private Vector3 _pView;
     [SerializeField] private RectTransform contentHolder;
-    [SerializeField] private List<RectTransform> content = new ();
-    private ScrollRect _slider;
-    
-    private Coroutine _currentSlideItem;
+    [SerializeField] private List<RectTransform> content = new();
 
-    [field: SerializeField] public int Current { get; private set; }
-    public static SlideUpHandler Instance { get; private set; }
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
-      
-    }
+    private Vector3 _pView;
+    private ScrollRect _slider;
+
+    /// <summary>
+    ///     processing and changing the state of the slider, saving / scrolling
+    /// </summary>
+    public int Current { get; private set; }
 
     private void Start()
     {
-        if (_slider == null) _slider = gameObject.GetComponent<ScrollRect>();
         _pView = _slider.transform.InverseTransformPoint(pointView.position);
-        Current = SaveLoadSceneData.Instance.CurrentItemSlider;
-        CreateSlide();
+    }
 
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        StopAllCoroutines();
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        StopAllCoroutines();
+        _slider.StopMovement();
+        FindCurrentItem();
+        StartCoroutine(SlideItem());
+    }
+
+    public void LoadSaveCurrentItem(SaveLoadSceneData saveLoadSceneData)
+    {
+        Current = saveLoadSceneData.CurrentItemSlider;
+        CreateSlide();
     }
 
     private void CreateSlide()
     {
-        foreach (var item in  SlideHolder.Instance.itemPrefab)
-        {
-            content.Add(Instantiate(item, contentHolder));
-        }
-        _currentSlideItem = StartCoroutine(SlideItem());
-    }
-    
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        StopCoroutine(_currentSlideItem);
-    }
-        
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        StopCoroutine(_currentSlideItem);
-        _slider.StopMovement();
-        FindCurrentItem();
-        _currentSlideItem = StartCoroutine(SlideItem());
+        foreach (var item in SlideHolder.GetInstance().itemPrefab) content.Add(Instantiate(item, contentHolder));
+
+        StartCoroutine(SlideItem());
     }
 
     private void FindCurrentItem()
@@ -79,31 +66,48 @@ public sealed class SlideUpHandler : MonoBehaviour, IEndDragHandler, IBeginDragH
                 currentContent = cont;
             }
         }
-            
-        int index = content.IndexOf(currentContent);
+
+        var index = content.IndexOf(currentContent);
         Current = index;
     }
-        
 
-    public void SnapTo(int currentItem)
+
+    private void SnapTo(int currentItem)
     {
         Canvas.ForceUpdateCanvases();
-        
+        if (_slider == null) _slider = gameObject.GetComponent<ScrollRect>();
+
         var cHolder = _slider.transform.InverseTransformPoint(contentHolder.position);
         var cContent = _slider.transform.InverseTransformPoint(content[currentItem].position);
-            
-        contentHolder.anchoredPosition = cHolder -  cContent;
+
+        var endPosition = cHolder - cContent;
+        StartCoroutine(LerpRect(contentHolder, endPosition));
     }
-        
+
+    private IEnumerator LerpRect(RectTransform rect, Vector2 endPosition)
+    {
+        float currentTime = 0;
+        var startPosition = rect.anchoredPosition;
+        while (currentTime <= Duration)
+        {
+            currentTime += Time.deltaTime;
+            var normalizedValue = currentTime / Duration;
+
+            rect.anchoredPosition = Vector2.Lerp(startPosition, endPosition, normalizedValue);
+            yield return null;
+        }
+
+        rect.anchoredPosition = endPosition;
+        _slider.StopMovement();
+    }
+
     private IEnumerator SlideItem()
     {
         SnapTo(Current);
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(Delay);
         Current++;
-        if (content.Count == Current)
-        {
-            Current = 0;
-        }
-        _currentSlideItem =  StartCoroutine(SlideItem());
+        if (content.Count == Current) Current = 0;
+
+        StartCoroutine(SlideItem());
     }
 }

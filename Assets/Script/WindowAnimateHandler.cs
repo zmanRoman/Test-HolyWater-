@@ -1,14 +1,15 @@
-
 using System.Collections;
 using UnityEngine;
 
 public sealed class WindowAnimateHandler : MonoBehaviour
-{/// <summary>
- /// control and processing of window animations
- /// </summary>
-    private Animator _animator;
-    [SerializeField] private bool showOnStart;
+{
+    private const float Delay = 0.3f;
+
     private static readonly int Show = Animator.StringToHash("Show"), Hide = Animator.StringToHash("Hide");
+    [SerializeField] private bool showOnStart;
+
+    private Animator _animator;
+
     private void Start()
     {
         if (_animator == null)
@@ -23,9 +24,10 @@ public sealed class WindowAnimateHandler : MonoBehaviour
     private IEnumerator ShowAfterStart()
     {
         if (!showOnStart) yield break;
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(Delay);
         AnimateWindow(true);
     }
+
     public void AnimateWindow(bool active)
     {
         switch (active)

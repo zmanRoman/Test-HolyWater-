@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 689657000
+CRC: 3681617953
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -7,9 +7,9 @@ AssetBundleManifest:
       Dependencies:
         Dependency_0: material
     Info_1:
+      Name: slide
+      Dependencies: {}
+    Info_2:
       Name: material
       Dependencies:
         Dependency_0: card
-    Info_2:
-      Name: slide
-      Dependencies: {}

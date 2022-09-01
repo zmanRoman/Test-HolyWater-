@@ -5,78 +5,89 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Script.Board
-{/// <summary>
- /// Responsible for the formation and reset of the board 
- /// </summary>
-
- [RequireComponent(typeof(ContentSizeFitter))]
+{
+    /// <summary>
+    ///     Responsible for the formation and reset of the board
+    /// </summary>
+    [RequireComponent(typeof(ContentSizeFitter))]
     public class Board : MonoBehaviour
     {
-        [SerializeField] private int countCardInRow = 3;
-
+        [SerializeField] private int countCardInRow = 6;
         [SerializeField] private List<Row> rows;
-        public static Board Instance { get; private set; }
 
         private ContentSizeFitter _contentSize;
-       
-        private void Awake()
+        private MusicHandler _musicHandler;
+        private SaveLoadSceneData _saveLoadSceneData;
+
+        private Board()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(this);
-            }
+        }
+
+        public int CountCardInRow => countCardInRow;
+
+        private void FindHandlers()
+        {
+            if (_musicHandler == null) _musicHandler = FindObjectOfType<MusicHandler>();
+            if (_saveLoadSceneData == null) _saveLoadSceneData = FindObjectOfType<SaveLoadSceneData>();
         }
 
         public void AddRow(Row row)
         {
             rows.Add(row);
-            List<CardData> cardData = new();
-            var sceneData = SaveLoadSceneData.Instance.GetSaveData();
-            if (sceneData != null )
-            {
-                cardData = sceneData.cardData.ToList();
-            }
+            var currentCards = GetSaveData(row.Num);
 
-            var currentCards = cardData.Where(card => card.rowNum == row.Num).ToList();
-            
-            currentCards.Sort((x, y) => x.indexInList.CompareTo(y.indexInList));
-            
             if (currentCards.Count != 0)
-            {//создаем из сохраненных данных
-                for (var i = 0; i < countCardInRow; i++)
-                {
-                    CardHandler cardPrefab = null;
-                    foreach (var card in CardHolder.Instance.CardPrefab.Where(card =>
-                                 currentCards[i].cardImageName == card.GetComponent<Image>().sprite.name))
-                    {
-                        cardPrefab = card;
-                    }
-                    row.SetCard(Instantiate(cardPrefab, row.transform),currentCards[i]);
-                }
-            }
+                CreateCardFromSaveData(currentCards, row);
             else
-            {//создаем рандомно
-                for (var i = 0; i < countCardInRow; i++)
-                {
-                    var index = Random.Range(0, CardHolder.Instance.CardPrefab.Count);
-                    row.SetCard(Instantiate(CardHolder.Instance.CardPrefab[index], row.transform), null);
-                }
+                CreateCardRandomly(row);
+        }
+
+        private List<CardData> GetSaveData(int rowNum)
+        {
+            List<CardData> cardData = new();
+            FindHandlers();
+            var sceneData = _saveLoadSceneData.GetSaveData();
+
+            if (sceneData != null) cardData = sceneData.cardData.ToList();
+
+            var currentCards = cardData.Where(card => card.rowNum == rowNum).ToList();
+
+            currentCards.Sort((x, y) => x.indexInList.CompareTo(y.indexInList));
+
+            return currentCards;
+        }
+
+        private void CreateCardFromSaveData(List<CardData> currentCards, Row row)
+        {
+            for (var i = 0; i < CountCardInRow; i++)
+            {
+                CardHandler cardPrefab = null;
+                foreach (var card in CardHolder.GetInstance().CardPrefab.Where(card =>
+                             currentCards[i].cardImageName == card.GetComponent<Image>().sprite.name))
+                    cardPrefab = card;
+
+                var cardHandler = Instantiate(cardPrefab, row.transform);
+                cardHandler.Init(_saveLoadSceneData, _musicHandler);
+                row.SetCard(cardHandler, currentCards[i]);
+            }
+        }
+
+        private void CreateCardRandomly(Row row)
+        {
+            for (var i = 0; i < CountCardInRow; i++)
+            {
+                var index = Random.Range(0, CardHolder.GetInstance().CardPrefab.Count);
+                var card = Instantiate(CardHolder.GetInstance().CardPrefab[index], row.transform);
+                card.Init(_saveLoadSceneData, _musicHandler);
+                row.SetCard(card, null);
             }
         }
 
         public void ResetAll()
         {
-            if (_contentSize == null)
-                _contentSize = GetComponent<ContentSizeFitter>();
+            if (_contentSize == null) _contentSize = GetComponent<ContentSizeFitter>();
             _contentSize.enabled = false;
-            foreach (var row in rows)
-            {
-                row.ResetCards();
-            }
+            foreach (var row in rows) row.ResetCards();
             _contentSize.enabled = true;
         }
     }

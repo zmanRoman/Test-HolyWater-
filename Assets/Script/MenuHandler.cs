@@ -6,8 +6,9 @@ public sealed class MenuHandler : MonoBehaviour
     {
         Application.Quit();
     }
+
     public void OpenLink(string link)
-    { 
+    {
         Application.OpenURL(link);
     }
 }

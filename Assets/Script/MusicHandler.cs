@@ -3,36 +3,27 @@ using UnityEngine;
 
 [RequireComponent(typeof(AudioListener))]
 public class MusicHandler : MonoBehaviour
-{/// <summary>
- /// music state handling
- /// </summary>
+{
+    private const float On = 1, Off = 0, Duration = 0.7f;
+
     [SerializeField] private AudioClip music;
     [SerializeField] private AudioClip fx;
+    [SerializeField] private AudioSource _audioSourceMusic;
+    [SerializeField] private AudioSource _audioSourceFX;
 
-    [field: SerializeField] public float FXVolume { get; private set; } = 1f;
-    [field: SerializeField] public float MusicVolume { get; private set; } = 1f;
-    [SerializeField]private AudioSource _audioSourceMusic;
-    [SerializeField]private AudioSource _audioSourceFX;
-    public static MusicHandler Instance { get; private set; }
-    private void Awake()
+    private MusicHandler()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
     }
 
-    private void Start()
+    public float FXVolume { get; private set; } = 1f;
+    public float MusicVolume { get; private set; } = 1f;
+
+    public void LoadSaveVolumeData(SaveLoadSceneData saveLoadSceneData)
     {
-        SetMusicVolume(SaveLoadSceneData.Instance.LoadMusicVolume);
-        SetFXVolume(SaveLoadSceneData.Instance.LoadFXVolume);
+        SetMusicVolume(saveLoadSceneData.LoadMusicVolume);
+        SetFXVolume(saveLoadSceneData.LoadFXVolume);
         PlayMusic();
     }
-
 
     private void SetMusicVolume(float volume)
     {
@@ -44,14 +35,15 @@ public class MusicHandler : MonoBehaviour
     {
         FXVolume = volume;
     }
+
     private void PlayMusic()
     {
         _audioSourceMusic.clip = music;
         _audioSourceMusic.volume = MusicVolume;
-        
-        if(_audioSourceMusic.volume != 0f)
-            _audioSourceMusic.Play();
+
+        if (_audioSourceMusic.volume != Off) _audioSourceMusic.Play();
     }
+
     // Start is called before the first frame update
     public void PlayFX()
     {
@@ -60,18 +52,18 @@ public class MusicHandler : MonoBehaviour
 
     public void SwitcherFx()
     {
-        FXVolume = FXVolume == 1f ? 0f : 1f;
+        FXVolume = FXVolume == On ? Off : On;
     }
-    
+
     public void SwitcherMusic()
     {
         if (MusicVolume >= 0.5f)
         {
-            StartCoroutine(SmoothChangeVolume(0f, 0.7f));
+            StartCoroutine(SmoothChangeVolume(Off, Duration));
         }
         else
         {
-            StartCoroutine(SmoothChangeVolume(1f, 0.7f));
+            StartCoroutine(SmoothChangeVolume(On, Duration));
             _audioSourceMusic.Play();
         }
     }
@@ -85,7 +77,7 @@ public class MusicHandler : MonoBehaviour
             currTime += Time.deltaTime;
             yield return null;
         } while (currTime <= time);
-        
+
         MusicVolume = endVolume;
         _audioSourceMusic.volume = endVolume;
     }
